@@ -3,6 +3,17 @@ using OrderGenerator.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// CORS
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -12,6 +23,12 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<OrderService>();
 builder.Services.AddSingleton<FixSessionManager>();
 
+// Nao incluir campo nulo no retorno
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+    });
 
 var app = builder.Build();
 
@@ -24,8 +41,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors();
+
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
+

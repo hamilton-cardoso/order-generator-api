@@ -16,7 +16,6 @@ namespace OrderGenerator.Infrastructure.Fix
 
         public void FromApp(Message message, SessionID sessionID)
         {
-            Console.WriteLine($"[RECEBIDO] Tipo: {message.GetType()} - Msg: {message.ToString()}");
             try
             {
                 Crack(message, sessionID);
@@ -31,53 +30,10 @@ namespace OrderGenerator.Infrastructure.Fix
             }
         }
 
-        private void ProcessExecutionReport(QuickFix.FIX44.ExecutionReport message)
-        {
-            try
-            {
-                // Vamos acessar o OrdStatus de uma forma diferente
-                if (message.IsSetField(QuickFix.Fields.Tags.OrdStatus))
-                {
-                    char ordStatus = message.GetChar(QuickFix.Fields.Tags.OrdStatus);
-
-                    switch (ordStatus)
-                    {
-                        case OrdStatus.NEW:
-                            Console.WriteLine($"[ORDEM] Nova ordem aceita. OrderID: {message.GetString(QuickFix.Fields.Tags.OrderID)}");
-                            break;
-                        case OrdStatus.PARTIALLY_FILLED:
-                            Console.WriteLine($"[ORDEM] Ordem parcialmente executada. OrderID: {message.GetString(QuickFix.Fields.Tags.OrderID)}, Quantidade executada: {message.GetDecimal(QuickFix.Fields.Tags.CumQty)}");
-                            break;
-                        case OrdStatus.FILLED:
-                            Console.WriteLine($"[ORDEM] Ordem totalmente executada. OrderID: {message.GetString(QuickFix.Fields.Tags.OrderID)}, Quantidade total: {message.GetDecimal(QuickFix.Fields.Tags.CumQty)}");
-                            break;
-                        case OrdStatus.REJECTED:
-                            string motivo = "Sem motivo especificado";
-                            if (message.IsSetField(QuickFix.Fields.Tags.Text))
-                            {
-                                motivo = message.GetString(QuickFix.Fields.Tags.Text);
-                            }
-                            Console.WriteLine($"[ORDEM] Ordem rejeitada. OrderID: {message.GetString(QuickFix.Fields.Tags.OrderID)}, Motivo: {motivo}");
-                            break;
-                        case OrdStatus.CANCELED:
-                            Console.WriteLine($"[ORDEM] Ordem cancelada. OrderID: {message.GetString(QuickFix.Fields.Tags.OrderID)}");
-                            break;
-                        default:
-                            Console.WriteLine($"[ORDEM] Status da ordem: {ordStatus}. OrderID: {message.GetString(QuickFix.Fields.Tags.OrderID)}");
-                            break;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"[ERRO] Erro ao processar ExecutionReport: {ex.Message}");
-            }
-        }
-
         public void OnMessage(QuickFix.FIX44.ExecutionReport message, SessionID sessionID)
         {
-            var execType = message.ExecType.getValue();
-            var orderId = message.ClOrdID.getValue();
+            var execType = message.ExecType.Value;
+            var orderId = message.ClOrdID.Value;
 
             string status;
 

@@ -10,15 +10,16 @@ namespace OrderGenerator.Controllers
     {
         private readonly OrderService _orderService;
 
-        public OrdersController(OrderService orderService)
-        {
-            _orderService = orderService;
-        }
+        public OrdersController(OrderService orderService) => _orderService = orderService;
 
         [HttpPost]
         public async Task<IActionResult> PostOrder([FromBody] OrderDto dto)
         {
             var result = await _orderService.SendOrderAsync(dto);
+
+            if (result.Status == "ERRO")
+                return StatusCode(503, result);
+
             return Ok(result);
         }
     }

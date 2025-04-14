@@ -12,7 +12,7 @@ namespace OrderGenerator.Application
             _fixManager = fixManager;
         }
 
-        public async Task<string> SendOrderAsync(OrderDto dto)
+        public async Task<FixOrderResultDto> SendOrderAsync(OrderDto dto)
         {
             return await _fixManager.SendNewOrderAsync(dto);
         }
