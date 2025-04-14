@@ -1,0 +1,42 @@
+# Build results
+bin/
+obj/
+out/
+
+# User-specific files
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider
+.idea/
+
+# Visual Studio Code
+.vscode/
+
+# Logs
+*.log
+log/
+store/
+
+# Configuration and settings
+appsettings.*.json
+
+# Temporary files
+*.tmp
+*.temp
+~$*
+
+# OS-specific
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# FIX-related logs
+*.seqnum
+session.*
+
+.vs/
